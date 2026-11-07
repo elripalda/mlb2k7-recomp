@@ -1,0 +1,58 @@
+diff --git a/cmake/rex_version.cmake b/cmake/rex_version.cmake
+index 03d6663..fc56b96 100644
+--- a/cmake/rex_version.cmake
++++ b/cmake/rex_version.cmake
+@@ -113,6 +113,12 @@ function(rex_resolve_version out_var)
+         set(ARG_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+     endif()
+ 
++    # MLB2K7: source zip has no git history, so take the version from the command line.
++    if(REXGLUE_VERSION_OVERRIDE)
++        set(${out_var} "${REXGLUE_VERSION_OVERRIDE}" PARENT_SCOPE)
++        return()
++    endif()
++
+     find_program(GIT_EXECUTABLE git)
+     if(NOT GIT_EXECUTABLE)
+         rex_compute_version(result
+diff --git a/src/core/CMakeLists.txt b/src/core/CMakeLists.txt
+index 1ddafd0..8e5a0a5 100644
+--- a/src/core/CMakeLists.txt
++++ b/src/core/CMakeLists.txt
+@@ -118,6 +118,8 @@ target_link_libraries(rexcore
+ 
+ if(REXGLUE_USE_D3D12)
+     target_compile_definitions(rexcore PUBLIC REX_HAS_D3D12=1)
++    # MLB2K7: built-in FSR / CAS output (no FidelityFX runtime needed)
++    target_compile_definitions(rexcore PUBLIC REX_HAS_FIDELITYFX_SDK=1)
+ endif()
+ if(REXGLUE_USE_VULKAN)
+     target_compile_definitions(rexcore PUBLIC REX_HAS_VULKAN=1)
+diff --git a/src/graphics/util/draw.cpp b/src/graphics/util/draw.cpp
+index 305380e..c5b8e7d 100644
+--- a/src/graphics/util/draw.cpp
++++ b/src/graphics/util/draw.cpp
+@@ -901,7 +901,9 @@ bool GetResolveInfo(const RegisterFile& regs, const memory::Memory& memory,
+   // Get the sample selection to safely pass to the shader.
+   xenos::CopySampleSelect sample_select = SanitizeCopySampleSelect(
+       rb_copy_control.copy_sample_select, rb_surface_info.msaa_samples, is_depth);
+-  if (rb_copy_control.copy_sample_select != sample_select) {
++  static bool sample_select_warned = false;  // MLB2K7: once, not every frame
++  if (rb_copy_control.copy_sample_select != sample_select && !sample_select_warned) {
++    sample_select_warned = true;
+     REXGPU_WARN(
+         "Incorrect resolve sample selected for {}-sample {}: {}, treating like "
+         "{}",
+diff --git a/src/system/CMakeLists.txt b/src/system/CMakeLists.txt
+index 05979a3..fa7ebd8 100644
+--- a/src/system/CMakeLists.txt
++++ b/src/system/CMakeLists.txt
+@@ -117,6 +117,8 @@ endif()
+ if(REXGLUE_USE_D3D12)
+     target_link_libraries(rexruntime PUBLIC dxc-headers)
+     target_compile_definitions(rexruntime PUBLIC REX_HAS_D3D12=1)
++    # MLB2K7: built-in FSR / CAS output (no FidelityFX runtime needed)
++    target_compile_definitions(rexruntime PUBLIC REX_HAS_FIDELITYFX_SDK=1)
+ endif()
+ if(REXGLUE_USE_VULKAN)
+     target_link_libraries(rexruntime PUBLIC

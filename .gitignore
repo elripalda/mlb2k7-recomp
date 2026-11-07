@@ -1,0 +1,16 @@
+# Generated from the game's code, built on your own machine
+project/generated/default/
+project/input/
+project/out/
+# The SDK source and build (BUILD_SDK.bat)
+sdk/src/
+sdk/build/
+sdk/install/
+sdk/BUILD_OK.txt
+sdk/*.zip
+# Your game, settings and builds
+MLB2K7Recomp/
+release/
+logs/
+*.log
+__pycache__/

@@ -1,0 +1,32 @@
+# MLB 2K7 Recomp settings
+# The setup screen adds game_data_root here when you pick a folder copy.
+
+# Internal resolution: 1 = 720p (the game's own), 2 = 1440p, 3 = 4K
+resolution_scale = 2
+
+fullscreen = false
+vsync = true
+
+# 16x texture filtering
+anisotropic_override = 5
+
+# Final picture: "cas" = sharpen, "fsr" = sharp upscale (1440p on a 4K screen), "bilinear" = plain
+present_effect = "cas"
+
+# Anti-aliasing: "none", "fxaa" or "fxaa_extreme"
+swap_post_effect = "none"
+
+# Brightness: "srgb" = made for a PC monitor, "tv" = how it looked on an old TV
+display_gamma = "srgb"
+
+# Frame counter in the top-left corner
+show_fps = false
+
+# Menu music volume, 0-100
+music_volume = 100
+
+# Needed for this game (speed and stability)
+gpu_plugin = "xenos"
+occlusion_query_enable = false
+direct_host_resolve = false
+use_fuzzy_alpha_epsilon = true
